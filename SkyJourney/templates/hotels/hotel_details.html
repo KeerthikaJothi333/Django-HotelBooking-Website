@@ -1,0 +1,85 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+{{hotel.title.capitalize}}
+{% endblock %}
+
+{% block content %}
+<div class=" cards">
+    <div class=" row ">
+
+        <div class="col-12 col-md-6 ">
+            {% include 'hotels/includes/hotelCarousel.html' %}
+        </div>
+
+        <div class="col-6 ">
+            <div class="d-flex flex-column justify-content-between">
+                <div class="hotel">
+
+                    <h2>
+                        {{hotel.name}}
+                    </h2>
+                </div>
+            </div>
+            <section>
+                <div class="hotel-details mt-4">
+                    <h4>
+                        Amenities
+                    </h4>
+                </div>
+                <div class="text-center mt-3">
+                    {% for hotel_amenity in hotel.hotel_amenities %}
+                    <div class="badge text-bg-success">
+
+                        {{hotel_amenity.amenity.title}}
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </section>
+            <section>
+                <div class="text-center mt-4">
+                    <div>
+                        Total capacity of {{hotel.total_rooms}} rooms.
+                    </div>
+                    <div>
+                        {% for detail in hotel.detail_count %}
+
+                        {{detail}}
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <div>
+
+            </div>
+            <section id="hotel-management">
+                <div class="row p-4 gap-3">
+                    <a href="{% url 'view_hotels' %}" class=" back col btn btn-dark">Back View</a>
+                    <a href="{% url 'edit_hotel' hotel.id %}" class="edit col btn btn-warning">Edit Hotel</a>
+                    <a href="{% url 'del_hotel' hotel.id %}" class=" remove col btn btn-danger">Remove Hotel</a>
+                </div>
+
+        </div>
+
+    </div>
+    <div class="row p-4">
+        <h4>Add picture</h4>
+        <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+            <div class="card">
+                {{form.as_p}}
+            </div>
+            <button type="submit" class="btn btn-success">Add picture</button>
+        </form>
+
+    </div>
+</div>
+
+
+
+
+{% endblock %}

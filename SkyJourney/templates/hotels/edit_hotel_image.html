@@ -1,0 +1,34 @@
+
+{% extends 'base/base.html' %}
+
+{% block title %}
+Edit Hotel Image
+{% endblock %}
+
+{% block content %}
+<div>
+    <h2 class="text-center">
+        Edit Hotel Image
+    </h2>
+</div>
+<div class="w-50 mx-auto">
+    <img src="{{hotel.thumbnail.url}}" class="w-100" alt="">
+</div>
+<div class="container card shadow ">
+    <form method="post" enctype="multipart/form-data" class="form d-flex flex-column">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="row">
+            <div class="col">
+                {{field.name.capitalize}}
+            </div>
+            <div class="col">
+                {{field}}
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Save</button>
+    </form>
+</div>
+
+{% endblock %}

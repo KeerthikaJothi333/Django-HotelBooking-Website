@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Remove Carousel Image
+{% endblock %}
+
+{% block content %}
+<div>
+    <h2 class="text-center">
+        Delete Carousel
+    </h2>
+</div>
+<div class="container card shadow ">
+    <form method="post" enctype="multipart/form-data" class="form d-flex flex-column">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="row">
+            <div class="col">
+                {{field.name.capitalize}}
+            </div>
+            <div class="col">
+                {{field}}
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+</div>
+
+{% endblock %}

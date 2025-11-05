@@ -1,0 +1,23 @@
+{% load static %}
+<div class="card col-12 col-sm-6 col-md-4 col-lg-3 p-0">
+  <img src="{{carousel.image.url}}" class="card-img-top rounded" alt="...">
+  <div class="card-body row">
+    <div class="col-6">
+      <h5 class="card-title">{{carousel.title}}</h5>
+      <p class="card-text text-truncate fs-6">
+        {{carousel.caption}}
+      </p>
+    </div>
+    <div class="col-6">
+      <a href="{% url 'edit_carousel' carousel.id %}" class="btn btn-info">
+        <!-- Update -->
+        <i class="bi bi-pencil-square"></i>
+      </a>
+      <a href="{% url 'del_carousel' carousel.id %}" class="btn btn-danger">
+        <!-- Delete -->
+        <i class="bi bi-trash"></i>
+      </a>
+    </div>
+  </div>
+
+</div>

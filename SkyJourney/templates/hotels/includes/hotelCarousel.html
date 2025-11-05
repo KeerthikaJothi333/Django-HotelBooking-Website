@@ -1,0 +1,35 @@
+{% load static %}
+<div class="hotel position-relative">
+  <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner bg-dark ">
+      {% for carousel_img in hotel.images.all %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %} position-relative">
+        <img src="{{ carousel_img.img.url }}" class="d-block w-100" alt="Image {{ forloop.counter }}">
+
+        <!-- Action icons -->
+        <div class="position-absolute top-0 start-50 translate-middle mt-4 d-flex gap-2">
+          <a href="{% url 'edit_hotel_image' carousel_img.id %}" class="text-light" title="Edit image">
+            <i class="bi bi-pencil-square fs-5"></i>
+          </a>
+          <a href="{% url 'del_hotel_image' carousel_img.id %}" class="text-danger" title="Delete image"
+             onclick="return confirm('Are you sure you want to delete this image?');">
+            <i class="bi bi-trash-fill fs-5"></i>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+     </div>
+
+    <!-- Carousel indicators (thumbnails) -->
+    <div class="carousel-indicators">
+      {% for carousel_img in hotel.images.all %}
+      <button type="button" data-bs-target="#carouselExampleIndicators"
+              data-bs-slide-to="{{ forloop.counter0}}"
+              class="{% if forloop.first %}active{% endif %} thumbnail" 
+              aria-current="true" aria-label="Slide {{ forloop.counter }}">
+        <img src="{{ carousel_img.img.url }}" class="d-block w-100 card" alt="{{ carousel_img.caption }}">
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>

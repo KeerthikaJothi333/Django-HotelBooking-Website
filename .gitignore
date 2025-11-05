@@ -1,0 +1,13 @@
+virt/
+
+
+db.sqlite3
+
+migrations/
+
+__pycache__/
+
+media/
+
+.env
+secrets.txt

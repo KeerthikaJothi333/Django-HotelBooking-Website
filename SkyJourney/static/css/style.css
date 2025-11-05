@@ -1,0 +1,105 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+header#site-header {
+    height: 40px;
+    
+
+}
+
+main{
+    background-color: white; 
+    margin-top: 30px;
+    /* margin:0; */
+    padding-bottom: 20px;
+
+
+    #home-carousel{
+        .custom-carousel img {
+            height: 450px;
+            width:100px;
+            object-fit: cover;
+            
+        }
+    }
+
+    #carousel-preview {
+
+        .custom-carousel img {
+            /* height: 200px; */
+            aspect-ratio: 16/4;
+            object-fit: cover;
+            object-position: top; 
+        }
+    }
+    .card-cointainer {
+        height: 450px;
+        width:100px;
+        object-fit: cover;
+            
+    }
+    #add {
+        display: flex;
+        justify-content :center;
+        color: black;
+    }
+     .carousel-cards-container { 
+        div.card {
+            height: 160px;
+            img {
+                aspect-ratio: 16/4;
+                width: 100%;
+                object-fit: cover;
+                object-position: top;
+            }
+        }
+    }
+    
+        
+   .col {
+    margin-top: 50px;
+    width: 47%;
+   }
+   .hotel h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center ;
+    text-shadow: 2px 2px 4px grey;
+    font-size: 50px;    
+    font-style: italic;     
+   }
+  .hotel-details  {
+    display: flex;
+    justify-content: center;
+    align-items: center ;
+    margin-bottom: 20px;
+    font-size: 18px;
+    /* font-style: italic; */
+    text-align: center;
+    /* display:inline-block; */
+  }
+
+  
+.hotels {
+    background-color:paleturquoise;
+}
+
+.cards {
+    background-color: cornsilk;
+}
+.edit {
+    background-color: palevioletred;
+    color: white;
+}
+.remove {
+    background-color: crimson;
+    color: white;
+}
+
+
+}
+
+
