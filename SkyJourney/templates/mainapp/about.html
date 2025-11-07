@@ -1,11 +1,118 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
-{% block title %}
-About
-{% endblock %}
+{% block title %}About Us | SkyJourney{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="text-white text-center py-5" style="background-color: #1B2A41;">
+  <div class="container">
+    <h1 class="display-4 fw-bold">SkyJourney</h1>
+    <p class="lead">Making every stay unforgettable — one booking at a time.</p>
+  </div>
+</section>
 
-This is the About page
+<!-- About Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <img src="{% static 'images/carousel/logo.png' %}" alt="SkyJourney Team" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-6">
+        <h2 class="fw-bold mb-3">Who We Are</h2>
+        <p class="text-muted">
+          SkyJourney is a next-generation hotel booking platform that connects travelers with the finest stays across India — from tranquil resorts to modern city hotels. We combine technology, trust, and comfort to make every stay effortless and enjoyable.
+        </p>
+        <p class="text-muted">
+          Founded in 2025, SkyJourney was built with a mission to simplify travel experiences through verified listings, transparent pricing, and secure bookings. Whether you’re traveling for business, leisure, or a weekend escape, we ensure that you find a place that feels like home.
+        </p>
+        <p class="text-muted">
+          Our team consists of hospitality experts, travel enthusiasts, and tech professionals dedicated to improving the way people discover and book accommodations. With a growing network of partner hotels, we continue to expand our footprint across India to make travel stress-free and memorable for everyone.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Mission & Vision -->
+<section class="bg-light py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Our Mission & Vision</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <h4 class="text-primary">Our Mission</h4>
+        <p>
+          To make hotel booking simple, affordable, and trustworthy — enabling travelers
+          to explore India without worries.
+        </p>
+      </div>
+      <div class="col-md-6">
+        <h4 class="text-success">Our Vision</h4>
+        <p>
+          To become India’s most loved travel companion by providing quality stays,
+          verified hotels, and an effortless booking experience.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Why Choose SkyJourney?</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <i class="bi bi-globe2 fs-1 text-primary mb-3"></i>
+        <h5>Nationwide Coverage</h5>
+        <p class="text-muted">Find hotels across every major city and hidden gem in India.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="bi bi-shield-lock fs-1 text-success mb-3"></i>
+        <h5>Secure Bookings</h5>
+        <p class="text-muted">We ensure 100% safe transactions and verified hotel listings.</p>
+      </div>
+      <div class="col-md-4">
+        <i class="bi bi-star-fill fs-1 text-warning mb-3"></i>
+        <h5>Trusted Reviews</h5>
+        <p class="text-muted">Every hotel is reviewed and rated by real travelers like you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team Section -->
+<!-- Team Section -->
+<section class="bg-light py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Meet Our Team</h2>
+    <p class="text-muted mb-5">
+      Behind SkyJourney is a dedicated team of hospitality professionals, working tirelessly to ensure
+      your comfort and satisfaction at every stay.
+    </p>
+    <div class="row g-4">
+      <div class="col-md-4">
+    
+        <h5>Mr. Aravind Kumar</h5>
+        <p class="text-muted">General Manager</p>
+        <p class="small text-secondary">With over 15 years in the hospitality industry, Aravind ensures smooth hotel operations and an exceptional guest experience.</p>
+      </div>
+      <div class="col-md-4">
+        
+        <h5>Ms. Keerthika Jothi</h5>
+        <p class="text-muted">Guest Relations Manager</p>
+        <p class="small text-secondary">Keerthika ensures every guest feels welcome and cared for, from the moment they arrive until check-out.</p>
+      </div>
+      <div class="col-md-4">
+        
+        <h5>Chef Nithin Kumar</h5>
+        <p class="text-muted">Executive Chef</p>
+        <p class="small text-secondary">Nithin brings creativity and passion to our kitchen, crafting delicious dishes that reflect the spirit of SkyJourney hospitality.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}

@@ -3,12 +3,15 @@ from django.urls import reverse_lazy
 
 from .models import CarouselImage
 
+from hotels.models import Hotel
+
 # Create your views here.
 def homeView(request):
     template_name = 'mainapp/home.html'
     context ={
         #dictionary with context data.
-        'carousel_images' : CarouselImage.objects.all()
+        'carousel_images' : CarouselImage.objects.all(),
+        'hotels' : Hotel.objects.all()
     }
     return render(request, template_name, context)
 
@@ -18,7 +21,7 @@ class AddCarouselImage(CreateView):
     model = CarouselImage # This provides table name for inserting records
     fields = '__all__' # Fields to insert values into
     # Defining where the site should redirect to, after successful insertion of record.
-    success_url = reverse_lazy('carousels_page')
+    success_url = reverse_lazy('carousel_page')
     template_name = 'mainapp/add_carousel.html'
 
 class EditCarousel(UpdateView):
@@ -44,6 +47,9 @@ def aboutView(request):
         #dictionary with context data.
     }
     return render(request, template_name, context)
+    
+
+
 
 def contactView(request):
     template_name = 'mainapp/contact.html'

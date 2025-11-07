@@ -1,11 +1,59 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
-{% block title %}
-Contact
-{% endblock %}
+{% block title %}Contact Us | SkyJourney{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="py-5 text-center text-white" 
+style="background: #1B2A41;">
+  <div class="container">
+    <h1 class="fw-bold">Contact SkyJourney</h1>
+    <p class="lead mb-0">Your travel partner for comfort, care, and convenience.</p>
+  </div>
+</section>
 
-This is the Contact page
 
+<!-- Contact Info -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold text-dark">Get in Touch</h2>
+      <p class="text-muted">We’re here to help you plan your next perfect stay!</p>
+    </div>
+
+    <div class="row text-center justify-content-center">
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-geo-alt-fill fs-1 text-danger mb-3"></i>
+        <h5 class="fw-bold">Head Office</h5>
+        <p class="text-muted">45 SkyTower Road,<br>Bengaluru, India</p>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-telephone-fill fs-1 text-success mb-3"></i>
+        <h5 class="fw-bold">Call Us</h5>
+        <p class="text-muted">+91 98765 43210<br>+91 90000 11122</p>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-envelope-fill fs-1 text-primary mb-3"></i>
+        <h5 class="fw-bold">Email</h5>
+        <p class="text-muted">support@skyjourney.com<br>info@skyjourney.com</p>
+      </div>
+      <div class="col-md-3 mb-4">
+        <i class="bi bi-clock-fill fs-1 text-warning mb-3"></i>
+        <h5 class="fw-bold">Customer Support</h5>
+        <p class="text-muted">24/7 Helpline<br>We’re always here for you!</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <h4 class="fw-bold text-secondary mb-3">Follow Us</h4>
+      <div>
+        <a href="#" class="text-primary fs-3 me-3"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-danger fs-3 me-3"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-info fs-3 me-3"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="text-dark fs-3"><i class="bi bi-linkedin"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

@@ -1,33 +1,37 @@
 {% extends 'base/base.html' %}
 
-{% block title %}
-Add Hotel
-{% endblock %}
+{% block title %}Add Hotel | SkyJourney{% endblock %}
 
 {% block content %}
-<div class="hotels m-0">
+<div class="container py-5" style="max-width: 700px;">
 
-    <div>
-        <h2 class=" text-center d-grid gap-2 col-6 mx-auto ">
-            Add Hotel
-        </h2>
+    <!-- Title -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">Add Hotel</h2>
+
     </div>
-    <div class="container card shadow">
-        <form method="post" enctype="multipart/form-data" class="form d-flex flex-column">
-            {%csrf_token %}
+
+    <!-- Form Card -->
+    <div class="card shadow-lg p-4 border-0 rounded-3">
+        <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
             {% for field in form %}
-            <div class="row">
-                <div class="col">
-                    {{field.name}}
-                </div>
-                <div class="col">
-                    {{field}}
+            <div class="mb-3 row align-items-center">
+                <label class="col-sm-4 col-form-label fw-semibold">{{ field.label_tag }}</label>
+                <div class="col-sm-8">
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
-            <button class="btn btn-info">Save</button>
-            <a href="{% url 'view_hotels' %}"></a>
 
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'view_hotels' %}" class="btn btn-outline-secondary">Back</a>
+                <button type="submit" class="btn btn-primary px-4">Save Hotel</button>
+            </div>
         </form>
     </div>
 </div>

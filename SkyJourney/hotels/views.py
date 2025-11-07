@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse_lazy,reverse
-from .models import Hotel, Amenity, HotelAmenity, HotelImage
+from .models import Hotel, Amenity, HotelAmenity, HotelImage, Pricing, RoomType
 
 
 # Create your views here.
@@ -67,5 +67,19 @@ class DelHotelImage(DeleteView):
     def get_success_url(self):
         hotel_pk = self.object.hotel.pk
         return reverse_lazy('hotel_details',kwargs={'pk': hotel_pk})
-        
 
+
+from django.http import JsonResponse
+
+def get_room_price(request):
+    room_type_id = request.GET.get('room_type_id')
+    print("asdfsadf")
+    try:
+        room_type = RoomType.objects.get(id=room_type_id)
+        pricing = Pricing.objects.filter(room_type=room_type).first()
+        if pricing:
+            return JsonResponse({'price': pricing.base_price})
+        else:
+            return JsonResponse({'price': 0})
+    except RoomType.DoesNotExist:
+        return JsonResponse({'price': 0})

@@ -24,7 +24,12 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mainapp.urls')),
-    path('hotels/', include('hotels.urls'))
+    path('hotels/', include('hotels.urls')),
+    path('booking/', include('booking.urls')),
+    
+     # auth
+    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls'))
 ]
 
 #appending urls to media folder during development

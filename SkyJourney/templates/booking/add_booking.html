@@ -1,0 +1,204 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Book {{ hotel.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <!-- Left side: Hotel Carousel -->
+  <div class="col-12 col-md-6">
+    {% include 'hotels/includes/hotelCarousel.html' %}
+  </div>
+
+  <!-- Right side: Booking Form -->
+
+  <div class="col-12 col-md-6 d-flex flex-column justify-content-center">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-primary">Book Your Stay at {{ hotel.name }}</h2>
+    </div>
+
+```
+<div class="container card shadow p-4">
+  <form method="post" enctype="multipart/form-data" class="form d-flex flex-column gap-3">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for error in form.non_field_errors %}
+      <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row mb-3 align-items-center">
+      <div class="col-4 text-end fw-semibold text-secondary">Date Range</div>
+      <div class="col-8">
+        {{ form.date_range }}
+        {% if form.date_range.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.date_range.errors %}
+          {{ error }}
+          {% endfor %}
+        </div>
+        {% endif %}
+        <small id="nights-info" class="text-muted d-block mt-1"></small>
+      </div>
+    </div>
+
+    <div class="row mb-3 align-items-center">
+      <div class="col-4 text-end fw-semibold text-secondary">
+        {{ form.room_type.label_tag }}
+      </div>
+      <div class="col-8">
+        {{ form.room_type }}
+        {% if form.room_type.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.room_type.errors %}
+          {{ error }}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mb-3 align-items-center">
+      <div class="col-4 text-end fw-semibold text-secondary">Total Price</div>
+      <div class="col-8">
+        <span id="total-price" class="fw-bold text-success">₹0</span>
+      </div>
+    </div>
+
+    {{ form.start_date }}
+    {{ form.end_date }}
+
+    <div class="d-grid mt-3">
+      <button type="submit" class="btn btn-success">Confirm Booking</button>
+    </div>
+  </form>
+
+  <div class="text-center mt-3">
+    <a href="{% url 'view_hotels' %}" class="btn btn-outline-dark btn-sm">Back to Hotels</a>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<!-- jQuery -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Moment.js -->
+
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+
+<!-- Bootstrap DateRangePicker -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+(function() {
+  function findDateInput() {
+    return $('#id_date_range').length ? $('#id_date_range')
+         : $('#date_range').length ? $('#date_range')
+         : $('input[name="date_range"]').length ? $('input[name="date_range"]')
+         : $();
+  }
+
+  $(document).ready(function () {
+    const today = moment().startOf('day');
+    const $dateInput = findDateInput();
+    const $startHidden = $('input[name="start_date"]');
+    const $endHidden = $('input[name="end_date"]');
+    const $roomSelect = $('#id_room_type').length ? $('#id_room_type') : $('select[name="room_type"]');
+    const $nightsInfo = $('#nights-info');
+    const $totalPrice = $('#total-price');
+
+    let nights = 0;
+    let roomPrice = 0;
+
+    function updateTotal() {
+      const total = (nights > 0 ? nights : 0) * (roomPrice > 0 ? roomPrice : 0);
+      $totalPrice.text(`₹${total}`);
+    }
+
+    function fetchRoomPriceAndUpdate(roomTypeId) {
+      if (!roomTypeId) {
+        roomPrice = 0;
+        updateTotal();
+        return;
+      }
+      $.ajax({
+        url: "{% url 'get_room_price' %}",
+        data: { room_type_id: roomTypeId },
+        dataType: "json",
+        success: function (data) {
+          roomPrice = parseFloat(data.price) || 0;
+          updateTotal();
+        },
+        error: function (xhr, status, err) {
+          console.error('get_room_price AJAX error:', status, err);
+          roomPrice = 0;
+          updateTotal();
+        }
+      });
+    }
+
+    $roomSelect.on('change', function () {
+      const id = $(this).val();
+      fetchRoomPriceAndUpdate(id);
+    });
+
+    if ($roomSelect.length && $roomSelect.val()) {
+      fetchRoomPriceAndUpdate($roomSelect.val());
+    }
+
+    if (typeof $dateInput.daterangepicker !== 'function') {
+      console.error('daterangepicker not found');
+      return;
+    }
+
+    if ($dateInput.length) {
+      // Initialize blank (no pre-filled value)
+      $dateInput.val('');
+
+      $dateInput.daterangepicker({
+        autoUpdateInput: false, // keeps input blank until selection
+        minDate: today,
+        opens: 'right',
+        autoApply: true,
+        locale: { format: 'YYYY-MM-DD', cancelLabel: 'Clear' }
+      }, function (start, end, label) {
+        if ($startHidden.length) $startHidden.val(start.format('YYYY-MM-DD'));
+        if ($endHidden.length) $endHidden.val(end.format('YYYY-MM-DD'));
+
+        nights = end.diff(start, 'days');
+        if (nights <= 0) nights = 1;
+
+        $dateInput.val(`${start.format('YYYY-MM-DD')} - ${end.format('YYYY-MM-DD')}`);
+        $nightsInfo.text(`${nights} night${nights>1 ? 's' : ''} selected`);
+        updateTotal();
+      });
+
+      // Allow clearing
+      $dateInput.on('cancel.daterangepicker', function() {
+        $dateInput.val('');
+        $startHidden.val('');
+        $endHidden.val('');
+        $nightsInfo.text('');
+        nights = 0;
+        updateTotal();
+      });
+    }
+  });
+})();
+</script>
+
+{% endblock %}

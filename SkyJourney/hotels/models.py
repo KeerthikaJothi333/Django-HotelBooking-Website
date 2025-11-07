@@ -134,3 +134,21 @@ class Room(models.Model):
             return pricing.base_price
         except ObjectDoesNotExist:
             return None  # or 0 if you prefer default value
+        
+
+    # Check if room is available for a given date range
+    def is_available_for(self, start_date, end_date):
+        """
+        Check if this room is available for the given date range.
+        Returns True if no overlapping active bookings exist.
+        """
+        if self.status != 'available':
+            return False
+
+        overlapping = self.bookings.filter(
+            status__in=['pending', 'completed'],
+            start_date__lte=end_date,
+            end_date__gte=start_date
+        ).exists()
+
+        return not overlapping

@@ -11,7 +11,7 @@
     {% for img in carousel_images %}
     <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
       <img src="{{img.image.url}}" class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block">
+      <div class="carousel-caption d-none d-md-block ">
         <h5>{{img.title.capitalize}}</h5>
         <p>{{img.caption}}</p>
       </div>
