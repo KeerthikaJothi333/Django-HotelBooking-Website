@@ -68,6 +68,50 @@ class DelHotelImage(DeleteView):
         hotel_pk = self.object.hotel.pk
         return reverse_lazy('hotel_details',kwargs={'pk': hotel_pk})
 
+class EditHotelAmenities(UpdateView):
+    model = Hotel
+    template_name = 'hotels/edit_hotel_amenities.html'
+    fields = []  # We'll manage manually
+    success_url = reverse_lazy('view_hotels')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Fetch all available amenities
+        all_amenities = Amenity.objects.all()
+
+        # Get selected amenities for this specific hotel
+        selected_amenities = HotelAmenity.objects.filter(hotel=self.object).values_list('amenity_id', flat=True)
+
+        # Debugging (you can comment these after testing)
+        print("All amenities:", list(all_amenities.values_list('id', 'title')))
+        print("Selected amenities:", list(selected_amenities))
+
+        # Pass to template
+        context['all_amenities'] = all_amenities
+        context['selected_amenities'] = list(selected_amenities)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        hotel = self.get_object()
+        selected_amenity_ids = request.POST.getlist('amenities')
+
+        # Debugging
+        print("POSTed amenities:", selected_amenity_ids)
+
+        # Remove all existing amenities for this hotel
+        HotelAmenity.objects.filter(hotel=hotel).delete()
+
+        # Add new amenities
+        for amenity_id in selected_amenity_ids:
+            try:
+                amenity = Amenity.objects.get(id=amenity_id)
+                HotelAmenity.objects.create(hotel=hotel, amenity=amenity)
+            except Amenity.DoesNotExist:
+                pass
+
+        return redirect('view_hotels')
+
 
 from django.http import JsonResponse
 
@@ -83,3 +127,56 @@ def get_room_price(request):
             return JsonResponse({'price': 0})
     except RoomType.DoesNotExist:
         return JsonResponse({'price': 0})
+    
+
+
+# hotels/views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import HotelReviewForm
+from booking.models import Booking
+from .models import HotelReview
+
+@login_required
+def add_review(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    # Prevent duplicate reviews
+    if HotelReview.objects.filter(booking=booking, user=request.user).exists():
+        messages.warning(request, "You have already reviewed this booking.")
+        return redirect('booking_list')
+
+    if request.method == "POST":
+        form = HotelReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.booking = booking
+            review.save()
+            messages.success(request, "Your review has been submitted successfully!")
+            return redirect('booking_list')
+    else:
+        form = HotelReviewForm()
+
+    return render(request, 'hotels/add_review.html', {'form': form, 'booking': booking})
+
+
+from django.db.models import Q
+
+def searchView(request):
+    query = request.GET.get('q')
+    result_hotels = Hotel.objects.filter(
+        Q(name__icontains=query) |
+        Q(location__icontains=query) |
+        Q(desc__icontains=query)
+    ).distinct()
+
+    context = {
+        'query': query,
+        'hotels': result_hotels,
+        'search_bar': True
+    }
+    template = 'hotels/search_results.html'
+
+    return render(request, template, context)

@@ -9,60 +9,71 @@ My Bookings
   <h2 class="fw-bold text-center text-primary mb-4">My Bookings</h2>
 
   {% if bookings %}
-    <div class="row justify-content-center">
-      {% for booking in bookings %}
-      <div class="col-12 col-md-10 col-lg-8 mb-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="fw-bold text-dark mb-0">{{ booking.room.hotel.name }}</h5>
-              <span class="badge 
+  <div class="row justify-content-center">
+    {% for booking in bookings %}
+    <div class="col-12 col-md-10 col-lg-8 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold text-dark mb-0">{{ booking.room.hotel.name }}</h5>
+            <span class="badge 
                 {% if booking.status == 'pending' %} bg-warning text-dark 
                 {% elif booking.status == 'completed' %} bg-success 
                 {% elif booking.status == 'cancelled' %} bg-danger 
                 {% else %} bg-secondary {% endif %}">
-                {{ booking.get_status_display }}
-              </span>
-            </div>
+              {{ booking.get_status_display }}
+            </span>
+          </div>
 
-            <p class="text-muted mb-1">
-              <i class="bi bi-door-open"></i> Room Type:
-              <span class="fw-semibold text-dark">{{ booking.room.room_type.name }}</span>
-            </p>
-            <p class="text-muted mb-1">
-              <i class="bi bi-calendar-date"></i> Dates:
-              <span class="fw-semibold text-dark">{{ booking.start_date }} → {{ booking.end_date }}</span>
-            </p>
-            <p class="text-muted mb-1">
-              <i class="bi bi-moon-stars"></i> Nights:
-              <span class="fw-semibold text-dark">{{ booking.nights }}</span>
-            </p>
-            <p class="text-muted mb-1">
-              <i class="bi bi-cash-stack"></i> Total Price:
-              <span class="fw-semibold text-success">₹{{ booking.total_price }}</span>
-            </p>
+          <p class="text-muted mb-1">
+            <i class="bi bi-door-open"></i> Room Type:
+            <span class="fw-semibold text-dark">{{ booking.room.room_type.name }}</span>
+          </p>
+          <p class="text-muted mb-1">
+            <i class="bi bi-calendar-date"></i> Dates:
+            <span class="fw-semibold text-dark">{{ booking.start_date }} → {{ booking.end_date }}</span>
+          </p>
+          <!-- <p class="text-muted mb-1">
+            <i class="bi bi-moon-stars"></i> Nights:
+            <span class="fw-semibold text-dark">{{ booking.nights }}</span>
+          </p> -->
+          <p class="text-muted mb-1">
+            <i class="bi bi-cash-stack"></i> Total Price:
+            <span class="fw-semibold text-success">₹{{ booking.total_price }}</span>
+          </p>
+          <p class="text-muted mb-1">
+            <i class="bi bi-cash-stack"></i> Booked at:
+            <span class="fw-semibold text-success">{{ booking.booked_at }}</span>
+          </p>
 
-            <div class="text-end mt-3">
-              <a href="{% url 'hotel_details' booking.room.hotel.id %}" class="btn btn-outline-primary btn-sm">
-                View Hotel
-              </a>
-              {% if booking.status == 'pending' %}
-                <a href="{% url 'del_booking' booking.id %}" class="btn btn-outline-danger btn-sm">
-                  Cancel
-                </a>
-              {% endif %}
-            </div>
+
+          <div class="text-end mt-3">
+            <a href="{% url 'hotel_details' booking.room.hotel.id %}" class="btn btn-outline-primary btn-sm">
+              View Hotel
+            </a>
+            {% if booking.status == 'pending' %}
+            <a href="{% url 'del_booking' booking.id %}" class="btn btn-outline-danger btn-sm">
+              Cancel
+            </a>
+            {% elif booking.status == 'completed' %}
+
+            <a href="{% url 'add_review' booking.id %}" class="btn btn-outline-primary btn-sm">
+              Write a Review
+            </a>
+
+            {% endif %}
           </div>
         </div>
       </div>
-      {% endfor %}
     </div>
+    {% endfor %}
+  </div>
   {% else %}
-    <div class="text-center text-muted py-5">
-      <i class="bi bi-calendar-x display-3 text-secondary mb-3"></i>
-      <h5>You haven’t made any bookings yet.</h5>
-      <a href="{% url 'view_hotels' %}" class="btn btn-primary mt-3">Browse Hotels</a>
-    </div>
+  <div class="text-center text-muted py-5">
+    <i class="bi bi-calendar-x display-3 text-secondary mb-3"></i>
+    <h5>You haven’t made any bookings yet.</h5>
+    <a href="{% url 'view_hotels' %}" class="btn btn-primary mt-3">Browse Hotels</a>
+  </div>
   {% endif %}
 </div>
 {% endblock %}

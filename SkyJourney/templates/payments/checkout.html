@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | SkyJourney</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #F37254, #ff8a65);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .checkout-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 550px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #F37254;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        p.text-center {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .order-details {
+            background-color: #fff7f3;
+            border: 1px solid #f7d1c6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-details h4 {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .order-details p {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .btn-pay {
+            background-color: #F37254;
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pay:hover {
+            background-color: #e85b3d;
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            background-color: #b02a37;
+            transform: translateY(-2px);
+        }
+
+        hr {
+            margin: 30px 0 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-card">
+        <h1>Checkout</h1>
+        <p class="text-center">Dear <strong>{{ user.username }}</strong>, please confirm your booking details and proceed with payment.</p>
+
+        <!-- Order Details -->
+        <div class="order-details">
+            <h4>Order Summary</h4>
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Total Amount:</strong> ₹{{ order.total_price }}</p>
+        </div>
+
+        <!-- Payment Section -->
+        <h4 class="text-center mb-3">Payment</h4>
+        <form id="payment-form" method="post" action="{% url 'payment:payment_success' %}">
+            {% csrf_token %}
+            <script src="https://checkout.razorpay.com/v1/checkout.js"
+                    data-key="{{ key_id }}"
+                    data-amount="{{ razorpay_order.amount }}"
+                    data-currency="{{ razorpay_order.currency }}"
+                    data-order_id="{{ razorpay_order.id }}"
+                    data-buttontext="Pay Now"
+                    data-name="SkyJourney"
+                    data-description="Hotel Booking Payment"
+                    data-theme.color="#F37254">
+            </script>
+            <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order.id }}">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        </form>
+
+        <!-- Cancel Order Section -->
+        <hr>
+        <form method="post" action="{% url 'del_booking' order.id %}">
+            {% csrf_token %}
+            <button type="submit" class="cancel-btn">Cancel Order</button>
+        </form>
+
+        <p class="footer-note">Secure payment powered by Razorpay 🔒</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

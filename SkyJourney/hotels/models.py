@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Hotel(models.Model):
@@ -36,8 +37,16 @@ class Hotel(models.Model):
                 )
         print(data)
         return data
+    @property
+    def review_set(self):
+        from booking.models import Booking
 
-    
+        # Find all bookings whose room belongs to this hotel
+        bookings = Booking.objects.filter(room__hotel=self)
+
+        # Fetch all reviews linked to those bookings
+        return HotelReview.objects.filter(booking__in=bookings)
+        
 class HotelImage(models.Model):
     CATEGORY_CHOICES = [
         ('exterior', 'Exterior'),
@@ -152,3 +161,15 @@ class Room(models.Model):
         ).exists()
 
         return not overlapping
+    
+from booking.models import Booking
+
+class HotelReview(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='reviews')
+    stars = models.PositiveIntegerField(default=0)
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.stars}⭐ for {self.booking.hotel.name}"

@@ -1,36 +1,42 @@
 {% extends 'base/base.html' %}
 
-{% block title %}
-Edit Hotel
-{% endblock %}
+{% block title %}Edit Hotel | SkyJourney{% endblock %}
 
 {% block content %}
-<div>
-    <h2 class ="text-center">
-        Edit Hotel
-    </h2>
-</div>
-<div class="container card shadow-sm border-0 rounded-3 p-4">
-    <form method="post" enctype="multipart/form-data" class="form d-flex flex-column ">
-        {%csrf_token %}
+<!-- Background Section -->
+<div class="py-5" style="background-color: #f4f8fb; min-height: 100vh;">
+
+  <div class="container" style="max-width: 700px;">
+
+    <!-- Title Section -->
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: black;">Edit Hotel</h2>
+      <p class="text-muted">Update hotel details below</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card shadow-lg p-4 border-0 rounded-3">
+      <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+
         {% for field in form %}
-        <div class="row ">
-            <div class="col ">
-                {{field.name.capitalize}}
-            </div>
-            <div class="col ">
-                {{field}}
-            </div>
+        <div class="mb-3 row align-items-center">
+          <label class="col-sm-4 col-form-label fw-semibold">{{ field.label_tag }}</label>
+          <div class="col-sm-8">
+            {{ field }}
+            {% if field.errors %}
+            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
         </div>
         {% endfor %}
+
         <div class="d-flex justify-content-between mt-4">
-        <button class="btn btn-dark " class="btn btn-outline-secondary px-4">back</button>
-        <a href="{% url 'view_hotels' %}"></a>
-
-
-        <button class="btn btn-success" class="btn btn-success px-4">Save</button>
-        <a href="{% url 'view_hotels' %}"></a>
+          <a href="{% url 'view_hotels' %}" class="btn btn-dark">Back</a>
+          <button type="submit" class="btn btn-success px-4">Save Changes</button>
         </div>
-    </form>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

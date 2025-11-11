@@ -1,3 +1,45 @@
-<footer class="fixed-bottom text-center bg-dark text-info">
-    &copy; 2025
+<footer style="background-color: #1B2A41; color: #F5F5F5;" class="pt-5 pb-3">
+  <div class="container">
+    <div class="row">
+      <!-- Logo & About -->
+      <div class="col-md-4 mb-4">
+        <h4 class="fw-bold" style="color: #F8B400;">SkyJourney</h4>
+        <p class="small">
+          Experience comfort, luxury, and unforgettable stays around the world.
+          SkyJourney connects travelers with premium hotels and easy booking options.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-4 mb-4">
+        <h5 style="color: #F8B400;">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="{% url 'home_page' %}" class="text-light text-decoration-none">Home</a></li>
+          <li><a href="{% url 'about_page' %}" class="text-light text-decoration-none">About Us</a></li>
+          <li><a href="{% url 'view_hotels' %}" class="text-light text-decoration-none">Hotels</a></li>
+          <li><a href="{% url 'contact_page' %}" class="text-light text-decoration-none">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact & Social -->
+      <div class="col-md-4 mb-4">
+        <h5 style="color: #F8B400;">Contact Us</h5>
+        <p class="mb-1"><i class="bi bi-geo-alt"></i> 123 Sky Street, Chennai, India</p>
+        <p class="mb-1"><i class="bi bi-telephone"></i> +91 98765 43210</p>
+        <p class="mb-3"><i class="bi bi-envelope"></i> support@skyjourney.com</p>
+
+        <div class="social-icons">
+          <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-light"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <hr class="border-light">
+    <div class="text-center">
+      <p class="mb-0 small">© 2025 SkyJourney. All Rights Reserved.</p>
+    </div>
+  </div>
 </footer>

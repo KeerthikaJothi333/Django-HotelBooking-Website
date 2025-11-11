@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Edit Hotel Amenities | SkyJourney{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 700px;">
+
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-primary">Edit Amenities</h2>
+    <p class="text-muted">Select or update amenities for <strong>{{ object.name }}</strong>.</p>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+
+      {% if all_amenities %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold mb-2">Select Amenities</label>
+          <div class="row">
+            {% for amenity in all_amenities %}
+              <div class="col-md-6 mb-2">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input"
+                    type="checkbox"
+                    name="amenities"
+                    value="{{ amenity.id }}"
+                    id="amenity_{{ amenity.id }}"
+                    {% if amenity.id in selected_amenities %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="amenity_{{ amenity.id }}">
+                    {{ amenity.title }}
+                  </label>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary px-4 me-2">Save</button>
+          <a href="{% url 'view_hotels' %}" class="btn btn-dark px-4">Cancel</a>
+        </div>
+      </form>
+      {% else %}
+        <p class="text-center text-danger mb-0">No amenities available. Please add amenities first.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

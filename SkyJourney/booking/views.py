@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
@@ -21,21 +21,19 @@ class BookingListView(LoginRequiredMixin, ListView):
         return Booking.objects.filter(user=self.request.user).order_by('-booked_at')
 
 
-# 🆕 Create a new booking
+
 class AddBooking(LoginRequiredMixin, CreateView):
     model = Booking
     form_class = BookingForm
     template_name = 'booking/add_booking.html'
-    success_url = reverse_lazy('booking_list')
 
     def dispatch(self, request, *args, **kwargs):
-        # Fetch the hotel from URL parameter
         self.hotel = get_object_or_404(Hotel, id=self.kwargs['hotel_id'])
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['hotel'] = self.hotel  # Pass hotel to form
+        kwargs['hotel'] = self.hotel
         return kwargs
 
     def form_valid(self, form):
@@ -59,22 +57,27 @@ class AddBooking(LoginRequiredMixin, CreateView):
         # ✅ Assign the room
         form.instance.room = available_room
 
-        # ✅ Calculate total price securely on the backend
+        # ✅ Calculate total price
         pricing = Pricing.objects.filter(room_type=room_type).first()
         base_price = pricing.base_price if pricing else 0
         nights = (end_date - start_date).days or 1
         total_price = base_price * nights
 
-        form.instance.total_price = total_price  # save computed price
+        form.instance.total_price = total_price
 
-        response = super().form_valid(form)
-        messages.success(self.request, f"Booking created successfully! Total: ₹{total_price}")
-        return response
+        # ✅ Save booking first (so we get a booking.id)
+        booking = form.save()
+
+        messages.success(self.request, f"Booking created successfully! Proceed to payment (Total: ₹{total_price})")
+
+        # 🔁 Redirect to Razorpay payment page
+        return redirect(reverse('payment:create_razorpay_order', args=[booking.id]))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['hotel'] = self.hotel
         return context
+
 
 
 # 📄 Booking detail view

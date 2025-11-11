@@ -7,7 +7,7 @@
 
     <!-- Title -->
     <div class="text-center mb-4">
-        <h2 class="fw-bold text-primary">Add Hotel</h2>
+        <h2 class="fw-bold" style="color: black;">Add Hotel</h2>
 
     </div>
 
@@ -27,11 +27,12 @@
                 </div>
             </div>
             {% endfor %}
-
+            
             <div class="d-flex justify-content-between mt-4">
-                <a href="{% url 'view_hotels' %}" class="btn btn-outline-secondary">Back</a>
-                <button type="submit" class="btn btn-primary px-4">Save Hotel</button>
+                <a href="{% url 'view_hotels' %}" class="btn btn-dark">Back</a>
+                <button type="submit" class="btn btn-success px-4">Save Hotel</button>
             </div>
+            
         </form>
     </div>
 </div>

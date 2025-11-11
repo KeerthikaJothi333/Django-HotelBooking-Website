@@ -6,19 +6,22 @@ Home
 
 {% block content %}
 
+
 <section id="home-carousel">
-    {% include "mainapp/includes/carousel.html" %}
+  {% include "mainapp/includes/carousel.html" %}
 </section>
 
 <section id="hotel-container" class="container py-4">
   <div class="row">
     {% for hotel in hotels %}
-      {% include 'hotels/includes/hotelCard.html' %}
-    
-      {% empty %}
-      <p class="text-center text-muted">No hotels found.</p>
+    {% include 'hotels/includes/hotelCard.html' %}
+
+    {% empty %}
+    <p class="text-center text-muted">No hotels found.</p>
     {% endfor %}
   </div>
 
+
 </section>
+
 {% endblock %}
