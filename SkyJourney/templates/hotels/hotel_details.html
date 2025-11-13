@@ -15,7 +15,7 @@
         <div class="d-flex flex-column justify-content-between">
             <div class="hotel">
                 <h2>{{ hotel.name }}</h2>
-                <p>{{hotel.location.capitalize}}</p>
+                <p>{{ hotel.location|capfirst }}</p>
             </div>
         </div>
 
@@ -50,18 +50,16 @@
             </div>
         </section>
 
-        <!-- Admin Options -->
+        <!-- Admin / Manager Options -->
         <section id="hotel-management">
-            {% if user.is_staff %}
+            {% if user.is_staff or user.manager_profile.hotel.id == hotel.id %}
             <div class="row p-4 gap-3">
                 <a href="{% url 'view_hotels' %}" class="back col btn btn-dark">Back View</a>
                 <a href="{% url 'edit_hotel' hotel.id %}" class="edit col btn btn-warning">Edit Hotel</a>
-                <a href="{% url 'del_hotel' hotel.id %}" class="remove col btn btn-danger">Remove Hotel</a>
                 <a href="{% url 'edit_hotel_amenities' hotel.id %}" class="btn btn-outline-primary">Edit Amenities</a>
+                <a href="{% url 'del_hotel' hotel.id %}" class="remove col btn btn-danger">Remove Hotel</a>
             </div>
-            {% endif %}
-
-            {% if not user.is_staff %}
+            {% else %}
             <div class="row p-4 gap-3">
                 <a href="{% url 'add_booking' hotel.id %}" class="col btn text-light" style="background-color: #1B2A41; border: none;">
                     Book Now
@@ -72,18 +70,88 @@
     </div>
 </div>
 
-{% if user.is_staff %}
+<!-- ✅ Add Picture (Manager or Staff) -->
+{% if user.is_staff or user.manager_profile.hotel.id == hotel.id %}
 <div class="row p-4">
-    <h4>Add picture</h4>
+    <h4>Add Picture</h4>
     <form method="post" enctype="multipart/form-data" class="form">
         {% csrf_token %}
         <div class="card">{{ form.as_p }}</div>
-        <button type="submit" class="btn btn-success">Add picture</button>
+        <button type="submit" class="btn btn-success">Add Picture</button>
     </form>
 </div>
 {% endif %}
 
-<!-- ✅ REVIEWS SECTION -->
+<!-- ✅ Upcoming Bookings (for Staff or Hotel Manager) -->
+{% if hotel_bookings is not None %}
+<section class="container mt-5">
+    <h4 class="text-primary">Upcoming Bookings</h4>
+    <table class="table table-bordered mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Guest</th>
+                <th>Room</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for booking in hotel_bookings %}
+            <tr>
+                <td>#{{ booking.id }}</td>
+                <td>{{ booking.user.username }}</td>
+                <td>{{ booking.room.room_type }}</td>
+                <td>{{ booking.start_date }}</td>
+                <td>{{ booking.end_date }}</td>
+                <td>{{ booking.status }}</td>
+                <td>
+                    <a href="{% url 'booking_details' booking.id %}" class="btn btn-sm btn-info">View</a>
+                    <a href="{% url 'edit_booking' booking.id %}" class="btn btn-sm btn-warning">Edit</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No upcoming bookings.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
+<!-- ✅ Messages -->
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- ✅ Manager Account (Staff only) -->
+{% if user.is_staff %}
+<section id="manager-account" class="mt-5 p-4 border rounded bg-light shadow-sm">
+    <h4 class="text-primary">Manager Account</h4>
+
+    {% if hotel.manager_profile %}
+        <div class="alert alert-success mt-3">
+            <strong>Account Activated ✅</strong><br>
+            <b>Username:</b> {{ hotel.manager_profile.user.username }} <br>
+            <b>Password:</b> {{ hotel.manager_profile.password_plain }}
+        </div>
+    {% else %}
+        <p class="text-muted mt-3">No manager account exists for this hotel yet.</p>
+        <a href="{% url 'create_manager_account' hotel.id %}" class="btn btn-outline-success mt-2">
+            <i class="bi bi-person-plus"></i> Create Manager Account
+        </a>
+    {% endif %}
+</section>
+{% endif %}
+
+<!-- ✅ Reviews Section -->
 <section class="container my-5">
     <h3 class="text-center text-primary mb-4">Guest Reviews</h3>
 
@@ -117,7 +185,6 @@
     {% endwith %}
 </section>
 
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
 {% endblock %}

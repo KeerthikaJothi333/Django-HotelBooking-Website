@@ -83,22 +83,30 @@ class AddBooking(LoginRequiredMixin, CreateView):
 # 📄 Booking detail view
 class BookingDetail(LoginRequiredMixin, DetailView):
     model = Booking
-    template_name = 'bookings/booking_detail.html'
+    template_name = 'booking/booking_detail.html'
     context_object_name = 'booking'
 
     def get_queryset(self):
-        # Restrict to own bookings unless staff
-        if self.request.user.is_staff:
-            return Booking.objects.all()
-        return Booking.objects.filter(user=self.request.user)
+        user = self.request.user
 
+        # Staff can see all bookings
+        if user.is_staff:
+            return Booking.objects.all()
+
+        # Manager can see bookings of their hotel
+        if hasattr(user, 'manager_profile'):
+            return Booking.objects.filter(room__hotel=user.manager_profile.hotel)
+
+        # Normal users can only see their own bookings
+        return Booking.objects.filter(user=user)
+    
 
 # ✏️ Edit/Update booking
 class EditBooking(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Booking
     fields = ['start_date', 'end_date', 'status']
-    template_name = 'bookings/booking_form.html'
-    success_url = reverse_lazy('booking_list')
+    template_name = 'booking/booking_form.html'
+    success_url = reverse_lazy('home_page')
 
     def form_valid(self, form):
         # model.clean() will handle overlap and date validation
@@ -112,7 +120,7 @@ class EditBooking(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         booking = self.get_object()
-        return self.request.user == booking.user or self.request.user.is_staff
+        return self.request.user == booking.user or self.request.user.is_staff or self.request.user.manager_profile.hotel == booking.room.hotel
 
 
 # ❌ Delete booking
@@ -127,4 +135,4 @@ class RemoveBooking(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         booking = self.get_object()
-        return self.request.user == booking.user or self.request.user.is_staff
+        return self.request.user == booking.user or self.request.user.is_staff or self.request.user.manager_profile.hotel == booking.room.hotel

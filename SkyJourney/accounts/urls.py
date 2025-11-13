@@ -13,4 +13,8 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify-otp'),
     path('set-new-password/', views.set_new_password, name='set-new-password'),
 
+
+    path('create-manager/<int:hotel_id>/', views.CreateManagerAccountView.as_view(), name='create_manager_account'),
+    path('booking/update/<int:pk>/', views.BookingUpdate.as_view(), name='manager_booking_update'),
+
 ]

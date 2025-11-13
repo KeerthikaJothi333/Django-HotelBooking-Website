@@ -20,6 +20,8 @@ class ViewHotels(ListView):
     template_name = 'hotels/hotels.html'
     context_object_name = 'hotels'
 
+from django.utils import timezone
+
 class HotelDetail(DetailView):
     model = Hotel
     template_name = 'hotels/hotel_details.html'
@@ -28,6 +30,19 @@ class HotelDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] =HotelImageForm()
+
+        # ---
+        hotel = self.get_object()
+
+        # Show bookings to managers or staff
+        if self.request.user.is_staff:
+            context['hotel_bookings'] = Booking.objects.filter(room__hotel=hotel, start_date__gte=timezone.now()).order_by('start_date')
+        elif hasattr(self.request.user, 'manager_profile'):
+            if self.request.user.manager_profile.hotel == hotel:
+                context['hotel_bookings'] = Booking.objects.filter(room__hotel=hotel, start_date__gte=timezone.now()).order_by('start_date')
+        else:
+            context['hotel_bookings'] = None
+
         return context
     
     def post(self,request,pk):

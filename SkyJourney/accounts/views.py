@@ -103,3 +103,84 @@ def set_new_password(request):
         form = SetPasswordForm(user)
 
     return render(request, 'accounts/pwd_reset/set_new_password.html', {'form': form})
+
+
+from django.views import View
+from django.views.generic import UpdateView
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy
+import random
+import string
+
+from hotels.models import Hotel
+from booking.models import Booking
+from .models import ManagerProfile
+
+
+class CreateManagerAccountView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def test_func(self):
+        return self.request.user.is_staff  # Only admin/staff can create manager accounts
+
+    def get(self, request, hotel_id):
+        hotel = get_object_or_404(Hotel, id=hotel_id)
+
+        # Prevent duplicate manager profile
+        if ManagerProfile.objects.filter(hotel=hotel).exists():
+            messages.warning(request, "Manager account already exists for this hotel!")
+            return redirect("hotel_list")
+
+        # Generate username from hotel name
+        base_username = hotel.name.replace(" ", "").lower()
+        username = base_username
+        if User.objects.filter(username=username).exists():
+            username = f"{base_username}{hotel.id}"
+
+        # Generate random password
+        password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+        # Create Django user
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=hotel.name,
+            email=f"{username}@hotelmail.com",
+        )
+
+        # Create ManagerProfile
+        ManagerProfile.objects.create(
+            user=user,
+            hotel=hotel,
+            address="",
+            bio="",
+            available=True,
+            password_plain=password
+        )
+
+        messages.success(
+            request,
+            f"Manager account created for {hotel.name}! Username: {username}, Password: {password}"
+        )
+        return redirect("hotel_details", pk=hotel.id)
+
+
+class BookingUpdate(LoginRequiredMixin, UpdateView):
+    model = Booking
+    fields = ['status', 'notes']  # adjust to your Booking model fields
+    template_name = 'manager/manager_booking_update.html'
+
+    def get_object(self, queryset=None):
+        booking = get_object_or_404(Booking, pk=self.kwargs['pk'])
+
+        # Only hotel manager can update their hotel’s bookings
+        if hasattr(self.request.user, 'manager_profile'):
+            if booking.hotel == self.request.user.manager_profile.hotel:
+                return booking
+
+        raise PermissionError("You are not allowed to edit this booking.")
+
+    def get_success_url(self):
+        return reverse_lazy('booking_list')
