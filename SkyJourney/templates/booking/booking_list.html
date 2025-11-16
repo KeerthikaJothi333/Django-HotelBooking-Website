@@ -6,7 +6,12 @@ My Bookings
 
 {% block content %}
 <div class="container py-5">
-  <h2 class="fw-bold text-center text-primary mb-4">My Bookings</h2>
+  <a href="javascript:history.back()" class="text-decoration-none" 
+   style="color:#5A4E7C; font-size: 24px;">
+    <i class="bi bi-arrow-left-circle"></i>
+</a>
+
+  <h2 class="fw-bold text-center  mb-4" style="color:   #5A4E7C;">My Bookings</h2>
 
   {% if bookings %}
   <div class="row justify-content-center">
@@ -48,7 +53,7 @@ My Bookings
 
 
           <div class="text-end mt-3">
-            <a href="{% url 'hotel_details' booking.room.hotel.id %}" class="btn btn-outline-primary btn-sm">
+            <a href="{% url 'hotel_details' booking.room.hotel.id %}" class="btn  btn-sm" style="background-color:#5A4E7C; color:white;">
               View Hotel
             </a>
             {% if booking.status == 'pending' %}
@@ -57,7 +62,7 @@ My Bookings
             </a>
             {% elif booking.status == 'completed' %}
 
-            <a href="{% url 'add_review' booking.id %}" class="btn btn-outline-primary btn-sm">
+            <a href="{% url 'add_review' booking.id %}" class="btn btn-sm" style="background-color:#5A4E7C; color:white;">
               Write a Review
             </a>
 
