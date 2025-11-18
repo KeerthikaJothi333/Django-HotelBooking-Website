@@ -83,10 +83,18 @@
         <button type="submit" class="btn" style="background-color: #1B2A41; border: none; color: white;">Add Picture</button>
     </form>
 </div>
+
+{% endif %}
+
+{% if user.manager_profile.hotel.id == hotel.id  %}
+<div class="d-flex justify-content-center">
+    <a href="{% url 'room_list' %}" class="btn btn-sm btn-success">Manage Rooms</a>
+</div>
 {% endif %}
 
 <!-- ✅ Upcoming Bookings (for Staff or Hotel Manager) -->
 {% if hotel_bookings is not None %}
+
 <section class="container mt-5">
     <h4 class="text-center" style=" background-color:   #5A4E7C;color: aliceblue;">Upcoming Bookings</h4>
     <table class="table table-bordered mt-3">

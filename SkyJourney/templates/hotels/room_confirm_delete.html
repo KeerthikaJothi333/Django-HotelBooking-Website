@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">Are you sure?</h4>
+        <p>
+            You are about to delete room <strong>{{ object.room_number }}</strong>
+            from hotel <strong>{{ object.hotel.name }}</strong>.
+        </p>
+        <hr>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'room_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

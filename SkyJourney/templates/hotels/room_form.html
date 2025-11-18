@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    {% if form.instance.pk %}
+        <h2>Edit Room</h2>
+    {% else %}
+        <h2>Add New Room</h2>
+    {% endif %}
+
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success">
+            {% if form.instance.pk %} Update Room {% else %} Create Room {% endif %}
+        </button>
+
+        <a href="{% url 'room_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+</div>
+
+{% endblock %}

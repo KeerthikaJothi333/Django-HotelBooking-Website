@@ -3,6 +3,8 @@ from .views import ViewHotels,AddHotel,HotelDetail,EditHotel,RemoveHotel
 from .views import EditHotelImage,DelHotelImage,EditHotelAmenities
 from .views import get_room_price, add_review, searchView
 
+from .views import RoomListView, RoomCreateView, RoomUpdateView, RoomDeleteView
+
 urlpatterns = [
     path('', ViewHotels.as_view(), name='view_hotels'),
     path('add/',AddHotel.as_view(), name='add_hotel'),
@@ -22,4 +24,11 @@ urlpatterns = [
 
 
     path('get-room-price/', get_room_price, name='get_room_price'),
+
+
+    
+     path("rooms/", RoomListView.as_view(), name="room_list"),
+    path("rooms/add/", RoomCreateView.as_view(), name="room_create"),
+    path("rooms/<int:pk>/edit/", RoomUpdateView.as_view(), name="room_update"),
+    path("rooms/<int:pk>/delete/", RoomDeleteView.as_view(), name="room_delete"),
 ]

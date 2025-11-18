@@ -195,3 +195,96 @@ def searchView(request):
     template = 'hotels/search_results.html'
 
     return render(request, template, context)
+
+
+
+# Room management
+
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from .models import Room
+
+
+# ---------- Access Control Mixin ----------
+class ManagerAccessMixin(UserPassesTestMixin):
+    """Only allow hotel managers to access their own hotel's rooms."""
+
+    def test_func(self):
+        user = self.request.user
+        return hasattr(user, "manager_profile")  # must have manager profile
+
+    def handle_no_permission(self):
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("You are not allowed to access this page.")
+    
+
+# ---------- LIST ----------
+class RoomListView(LoginRequiredMixin, ManagerAccessMixin, ListView):
+    model = Room
+    template_name = "hotels/room_list.html"
+    context_object_name = "rooms"
+
+    def get_queryset(self):
+        return Room.objects.filter(
+            hotel=self.request.user.manager_profile.hotel
+        )
+    
+
+# ---------- CREATE ----------
+class RoomCreateView(LoginRequiredMixin, ManagerAccessMixin, CreateView):
+    model = Room
+    fields = ["room_type", "status"]  # Remove room_number from form
+    template_name = "hotels/room_form.html"
+    success_url = reverse_lazy("room_list")
+
+    def generate_room_number(self, hotel):
+        # Get last room number in that hotel
+        last_room = Room.objects.filter(hotel=hotel).order_by("-room_number").first()
+
+        if last_room and last_room.room_number.isdigit():
+            return str(int(last_room.room_number) + 1)
+        else:
+            return "101"  # default starting number
+
+    def form_valid(self, form):
+        hotel = self.request.user.manager_profile.hotel
+
+        # Assign hotel automatically
+        form.instance.hotel = hotel
+
+        # Auto-generate room number
+        form.instance.room_number = self.generate_room_number(hotel)
+
+        return super().form_valid(form)
+
+# ---------- UPDATE ----------
+class RoomUpdateView(LoginRequiredMixin, ManagerAccessMixin, UpdateView):
+    model = Room
+    fields = ["room_number", "room_type", "status"]
+    template_name = "hotels/room_form.html"
+    success_url = reverse_lazy("room_list")
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset)
+        # Allow only if room belongs to manager’s hotel
+        if room.hotel != self.request.user.manager_profile.hotel:
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden("You cannot edit rooms of another hotel.")
+        return room
+    
+
+# ---------- DELETE ----------
+class RoomDeleteView(LoginRequiredMixin, ManagerAccessMixin, DeleteView):
+    model = Room
+    template_name = "hotels/room_confirm_delete.html"
+    success_url = reverse_lazy("room_list")
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset)
+        if room.hotel != self.request.user.manager_profile.hotel:
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden("You cannot delete rooms of another hotel.")
+        return room

@@ -18,7 +18,14 @@ class BookingListView(LoginRequiredMixin, ListView):
         # Staff can see all bookings; users see only their own
         if self.request.user.is_staff:
             return Booking.objects.all().order_by('-booked_at')
-        return Booking.objects.filter(user=self.request.user).order_by('-booked_at')
+        else :
+            try:
+                if self.request.user.manager_profile:
+                    # if manager profile, gives bookings for particular hotel
+                    return Booking.objects.filter(room__hotel=self.request.user.manager_profile.hotel).order_by('-booked_at')
+            except:
+                # This gives bookings for particular customer
+                return Booking.objects.filter(user=self.request.user).order_by('-booked_at')
 
 
 
@@ -136,3 +143,7 @@ class RemoveBooking(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         booking = self.get_object()
         return self.request.user == booking.user or self.request.user.is_staff or self.request.user.manager_profile.hotel == booking.room.hotel
+
+
+# Room CRUD
+
